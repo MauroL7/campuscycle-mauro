@@ -55,7 +55,8 @@ function withPriceFix(source: string): string | null {
   const quoted = (start: string) => lines.find((line) => line.trimStart().startsWith(`//   ${start}`))?.trim().replace(/^\/\/\s+/, '')
   const newLabel = quoted('const label = ')
   const newImport = quoted('import { formatPrice }')
-  const label = lines.findIndex((line) => line.trim() === 'const label = repair.name')
+  if (source.includes("const label = repair.name + ', ' + formatPrice(repair.price)") && source.includes("import { formatPrice } from '@/lib/format'")) return source
+const label = lines.findIndex((line) => line.trim() === 'const label = repair.name')
   if (!newLabel || !newImport || label < 0) return null
   lines[label] = lines[label].replace('const label = repair.name', newLabel)
   const lastImport = lines.reduce((last, line, i) => (line.startsWith('import ') ? i : last), -1)
